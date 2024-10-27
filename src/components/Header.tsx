@@ -5,9 +5,9 @@ export function Header() {
   const { user } = useAuthStore();
 
   return (
-    <header className="bg-white border-b border-gray-200">
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+    <header className="bg-white border-b border-gray-200 h-16 flex-shrink-0">
+      <div className="h-full px-4 sm:px-6 lg:px-8">
+        <div className="flex h-full items-center justify-between">
           <div className="flex items-center">
             <h1 className="text-2xl font-semibold text-gray-900">
               {user?.role === 'SUPER_ADMIN' ? 'Admin Dashboard' : 'Company Dashboard'}

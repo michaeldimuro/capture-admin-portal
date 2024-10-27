@@ -41,44 +41,44 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 min-h-screen">
-      <div className="flex flex-col h-full">
-        <div className="p-4">
-          <div className="flex items-center justify-center h-12 mb-8">
-            <h1 className="text-xl font-bold text-gray-900">
-              {isSuperAdmin ? 'Admin Portal' : 'Company Portal'}
-            </h1>
-          </div>
-          <nav className="space-y-1">
-            {links.map((link) => {
-              const Icon = link.icon;
-              return (
-                <Link
-                  key={link.href}
-                  to={link.href}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md',
-                    location.pathname === link.href
-                      ? 'bg-gray-100 text-gray-900'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  )}
-                >
-                  <Icon className="h-5 w-5" />
-                  {link.label}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-        <div className="mt-auto p-4">
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2 w-full text-sm font-medium text-red-600 hover:bg-red-50 rounded-md"
-          >
-            <LogOut className="h-5 w-5" />
-            Logout
-          </button>
-        </div>
+    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
+      <div className="flex items-center justify-center h-16 border-b border-gray-200">
+        <h1 className="text-xl font-bold text-gray-900">
+          Capture Health
+        </h1>
+      </div>
+      
+      <div className="flex-1 overflow-y-auto py-4">
+        <nav className="space-y-1 px-3">
+          {links.map((link) => {
+            const Icon = link.icon;
+            return (
+              <Link
+                key={link.href}
+                to={link.href}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md',
+                  location.pathname === link.href
+                    ? 'bg-gray-100 text-gray-900'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                )}
+              >
+                <Icon className="h-5 w-5" />
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+
+      <div className="border-t border-gray-200 p-4">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-3 py-2 w-full text-sm font-medium text-red-600 hover:bg-red-50 rounded-md"
+        >
+          <LogOut className="h-5 w-5" />
+          Logout
+        </button>
       </div>
     </aside>
   );
