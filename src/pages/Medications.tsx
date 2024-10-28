@@ -68,6 +68,7 @@ export function Medications() {
   );
 
   return (
+    <>
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
@@ -154,8 +155,8 @@ export function Medications() {
           </div>
         </div>
       </Card>
-
-      <AddMedicationModal
+    </div>
+    <AddMedicationModal
         isOpen={isAddModalOpen}
         onClose={() => {
           setIsAddModalOpen(false);
@@ -164,6 +165,6 @@ export function Medications() {
         onSubmit={handleAddMedication}
         medication={editingMedication}
       />
-    </div>
+    </>
   );
 }

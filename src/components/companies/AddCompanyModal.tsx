@@ -8,18 +8,21 @@ interface Props {
   onSubmit: (data: {
     name: string;
     owner: {
-      name: string;
+      firstName: string;
+      lastName: string;
       email: string;
-      password: string;
+      phoneNumber: string;
     };
   }) => void;
+  isLoading: boolean;
 }
 
 export function AddCompanyModal({ isOpen, onClose, onSubmit }: Props) {
   const [companyName, setCompanyName] = useState('');
-  const [ownerName, setOwnerName] = useState('');
+  const [ownerFirstName, setOwnerFirstName] = useState('');
+  const [ownerLastName, setOwnerLastName] = useState('');
   const [ownerEmail, setOwnerEmail] = useState('');
-  const [ownerPassword, setOwnerPassword] = useState('');
+  const [ownerPhoneNumber, setOwnerPhoneNumber] = useState('');
 
   if (!isOpen) return null;
 
@@ -28,9 +31,10 @@ export function AddCompanyModal({ isOpen, onClose, onSubmit }: Props) {
     onSubmit({
       name: companyName,
       owner: {
-        name: ownerName,
+        firstName: ownerFirstName,
+        lastName: ownerLastName,
         email: ownerEmail,
-        password: ownerPassword,
+        phoneNumber: ownerPhoneNumber
       },
     });
     onClose();
@@ -65,11 +69,22 @@ export function AddCompanyModal({ isOpen, onClose, onSubmit }: Props) {
             <h3 className="text-sm font-medium text-gray-700 mb-4">Owner Account</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Full Name</label>
+                <label className="block text-sm font-medium text-gray-700">First Name</label>
                 <input
                   type="text"
-                  value={ownerName}
-                  onChange={(e) => setOwnerName(e.target.value)}
+                  value={ownerFirstName}
+                  onChange={(e) => setOwnerFirstName(e.target.value)}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Last Name</label>
+                <input
+                  type="text"
+                  value={ownerLastName}
+                  onChange={(e) => setOwnerLastName(e.target.value)}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
                   required
                 />
@@ -87,11 +102,11 @@ export function AddCompanyModal({ isOpen, onClose, onSubmit }: Props) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Password</label>
+                <label className="block text-sm font-medium text-gray-700">Phone Number</label>
                 <input
-                  type="password"
-                  value={ownerPassword}
-                  onChange={(e) => setOwnerPassword(e.target.value)}
+                  type="tel"
+                  value={ownerPhoneNumber}
+                  onChange={(e) => setOwnerPhoneNumber(e.target.value)}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
                   required
                 />

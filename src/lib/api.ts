@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Company } from '../types';
 
 const api = axios.create({
   baseURL: 'http://localhost:3030/dev', // Replace with your actual API URL
@@ -56,6 +57,39 @@ export const dashboardApi = {
   getStats: async (): Promise<DashboardStats> => {
     const response = await api.get('/dashboard/stats');
     return response.data;
+  },
+};
+
+export const companiesApi = {
+  getCompanies: async (): Promise<any> => {
+    const response = await api.get('/admin/tenants');
+    return response.data;
+  },
+
+  getCompany: async (id: string): Promise<any> => {
+    const response = await api.get(`/admin/tenants/${id}`);
+    return response.data;
+  },
+
+  createCompany: async (data: {
+    name: string;
+    owner: {
+      name: string;
+      email: string;
+      password: string;
+    };
+  }): Promise<Company> => {
+    const response = await api.post('/admin/tenants', data);
+    return response.data;
+  },
+
+  updateCompany: async (id: string, data: Partial<Company>): Promise<Company> => {
+    const response = await api.patch(`/admin/tenants/${id}`, data);
+    return response.data;
+  },
+
+  deleteCompany: async (id: string): Promise<void> => {
+    await api.delete(`/admin/tenants/${id}`);
   },
 };
 

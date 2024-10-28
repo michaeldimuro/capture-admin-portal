@@ -1,22 +1,38 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { useCompanyStore } from "../stores/companyStore";
 import { Tabs, TabsList, TabTrigger, TabsContent } from "../components/ui/Tabs";
+import { useCompany } from "../hooks/useCompany";
+import { Card } from "../components/ui/Card";
+import { TrendingUp, TrendingDown } from "lucide-react";
+import { cn } from "../lib/utils";
 
 export function CompanyDetails() {
   const { id } = useParams();
-  const { companies } = useCompanyStore();
-  const company = companies.find(c => c.id === id);
+  const { data: company, isLoading, error } = useCompany(id!);
 
-  if (!company) {
-    return <div className="p-6">Company not found</div>;
+
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (error || !company) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-red-600">Failed to load company details</div>
+      </div>
+    );
   }
 
   return (
     <div className="p-6">
       <div className="flex items-center gap-4 mb-6">
         <img 
-          src={company.logo} 
+          src={company?.logo || "https://placehold.co/200x200/png"} 
           alt={`${company.name} logo`} 
           className="w-16 h-16 rounded-full"
         />
@@ -24,6 +40,45 @@ export function CompanyDetails() {
           <h1 className="text-2xl font-bold">{company.name}</h1>
           <p className="text-gray-500">Company ID: {company.id}</p>
         </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-6 mb-6">
+        <Card>
+          <div className="p-6">
+            <h3 className="text-sm font-medium text-gray-500">Total Patients</h3>
+            <p className="text-3xl font-semibold mt-2">{company?.patientsCount || '--'}</p>
+          </div>
+        </Card>
+        <Card>
+          <div className="p-6">
+            <h3 className="text-sm font-medium text-gray-500">Active Orders</h3>
+            <p className="text-3xl font-semibold mt-2">{company?.activeOrders || '--'}</p>
+          </div>
+        </Card>
+        <Card>
+          <div className="p-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-medium text-gray-500">Monthly Revenue</h3>
+              <span className={cn(
+                "inline-flex items-center text-sm font-medium",
+                company?.revenue?.trend >= 0 ? "text-green-600" : "text-red-600"
+              )}>
+                {company?.revenue?.trend >= 0 ? (
+                  <TrendingUp className="h-4 w-4 mr-1" />
+                ) : (
+                  <TrendingDown className="h-4 w-4 mr-1" />
+                )}
+                {Math.abs(company?.revenue?.trend)  || '--'}%
+              </span>
+            </div>
+            <p className="text-3xl font-semibold mt-2">
+              ${company?.revenue?.current?.toLocaleString()}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              Previous: ${company?.revenue?.previous?.toLocaleString()  || '--'}
+            </p>
+          </div>
+        </Card>
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
@@ -39,16 +94,16 @@ export function CompanyDetails() {
             <div className="bg-white p-4 rounded-lg shadow">
               <h3 className="font-medium text-gray-900 mb-2">Company Information</h3>
               <div className="space-y-2">
-                <p><span className="text-gray-500">Email:</span> {company.email}</p>
-                <p><span className="text-gray-500">Phone:</span> {company.phone}</p>
-                <p><span className="text-gray-500">Website:</span> {company.website}</p>
+                <p><span className="text-gray-500">Email:</span> {company?.email}</p>
+                <p><span className="text-gray-500">Phone:</span> {company?.phone}</p>
+                <p><span className="text-gray-500">Website:</span> {company?.website}</p>
               </div>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
               <h3 className="font-medium text-gray-900 mb-2">Address</h3>
               <div className="space-y-2">
-                <p>{company.address}</p>
-                <p>{company.city}, {company.state} {company.zipCode}</p>
+                <p>{company?.address}</p>
+                <p>{company?.city}, {company?.state} {company?.zipCode}</p>
               </div>
             </div>
           </div>
@@ -78,5 +133,3 @@ export function CompanyDetails() {
     </div>
   );
 }
-
-export default CompanyDetails;
