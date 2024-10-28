@@ -10,7 +10,7 @@ export function Header() {
         <div className="flex h-full items-center justify-between">
           <div className="flex items-center">
             <h1 className="text-2xl font-semibold text-gray-900">
-              {user?.role === 'SUPER_ADMIN' ? 'Admin Dashboard' : 'Company Dashboard'}
+              {user?.role === 'SUPERADMIN' ? 'Admin Dashboard' : 'Company Dashboard'}
             </h1>
           </div>
           <div className="flex items-center gap-4">

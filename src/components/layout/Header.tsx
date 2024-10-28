@@ -20,7 +20,7 @@ export function Header() {
             <div>
               <p className="text-sm font-medium text-gray-900">{user?.name}</p>
               <p className="text-xs text-gray-500">
-                {user?.role === 'SUPER_ADMIN' ? 'Super Admin' : 'Company Admin'}
+                {user?.role === 'SUPERADMIN' ? 'Super Admin' : 'Company Admin'}
               </p>
             </div>
           </div>

@@ -15,7 +15,7 @@ import { cn } from '../../lib/utils';
 
 export function Sidebar() {
   const { user } = useAuthStore();
-  const isSuperAdmin = user?.role === 'SUPER_ADMIN';
+  const isSuperAdmin = user?.role === 'SUPERADMIN';
 
   const links = isSuperAdmin
     ? [

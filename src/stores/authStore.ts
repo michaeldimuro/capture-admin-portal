@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type UserRole = 'SUPER_ADMIN' | 'COMPANY_ADMIN';
+export type UserRole = 'SUPERADMIN' | 'COMPANY_ADMIN';
 
 interface User {
   id: string;
@@ -13,39 +13,35 @@ interface User {
 
 interface AuthState {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (user: User) => Promise<boolean>;
   logout: () => void;
 }
 
-const mockUsers = [
-  {
-    id: '1',
-    role: 'SUPER_ADMIN' as UserRole,
-    name: 'John Admin',
-    email: 'admin@example.com',
-    password: 'admin123',
-  },
-  {
-    id: '2',
-    role: 'COMPANY_ADMIN' as UserRole,
-    name: 'Jane Company',
-    email: 'company@example.com',
-    password: 'company123',
-    companyId: 'c1',
-  },
-];
+// const mockUsers = [
+//   {
+//     id: '1',
+//     role: 'SUPERADMIN' as UserRole,
+//     name: 'John Admin',
+//     email: 'admin@example.com',
+//     password: 'admin123',
+//   },
+//   {
+//     id: '2',
+//     role: 'COMPANY_ADMIN' as UserRole,
+//     name: 'Jane Company',
+//     email: 'company@example.com',
+//     password: 'company123',
+//     companyId: 'c1',
+//   },
+// ];
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
-      login: async (email: string, password: string) => {
-        const user = mockUsers.find(
-          (u) => u.email === email && u.password === password
-        );
+      login: async (user: User) => {
         if (user) {
-          const { password: _, ...userWithoutPassword } = user;
-          set({ user: userWithoutPassword });
+          set({ user });
           return true;
         }
         return false;

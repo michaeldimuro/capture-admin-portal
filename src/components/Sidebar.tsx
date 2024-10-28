@@ -11,12 +11,14 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { cn } from '../lib/utils';
+import { useAuth } from '../hooks/useAuth';
 
 export function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuthStore();
-  const isSuperAdmin = user?.role === 'SUPER_ADMIN';
+  const { user } = useAuthStore();
+  const { logout } = useAuth()
+  const isSuperAdmin = user?.role === 'SUPERADMIN';
 
   const handleLogout = () => {
     logout();

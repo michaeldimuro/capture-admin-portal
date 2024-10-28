@@ -4,7 +4,7 @@ interface User {
   id: string;
   name: string;
   email: string;
-  role: 'SUPER_ADMIN' | 'COMPANY_ADMIN';
+  role: 'SUPERADMIN' | 'COMPANY_ADMIN';
 }
 
 interface AuthStore {
@@ -17,7 +17,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
     id: '1',
     name: 'John Doe',
     email: 'john@example.com',
-    role: 'SUPER_ADMIN',
+    role: 'SUPERADMIN',
   },
   setUser: (user) => set({ user }),
 }));

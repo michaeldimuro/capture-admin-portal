@@ -3,13 +3,13 @@ import { Navigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { Card } from '../components/ui/Card';
 import { LogIn } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 export function Login() {
-  const { user, login } = useAuthStore();
+  const { user } = useAuthStore();
+  const { login, isLoading, error } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
   if (user) {
     return <Navigate to="/" />;
@@ -17,19 +17,7 @@ export function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setIsLoading(true);
-
-    try {
-      const success = await login(email, password);
-      if (!success) {
-        setError('Invalid email or password');
-      }
-    } catch (err) {
-      setError('An error occurred');
-    } finally {
-      setIsLoading(false);
-    }
+    login({ email, password });
   };
 
   return (
@@ -51,7 +39,9 @@ export function Login() {
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             {error && (
               <div className="rounded-md bg-red-50 p-4">
-                <p className="text-sm text-red-700">{error}</p>
+                <p className="text-sm text-red-700">
+                  {error instanceof Error ? error.message : 'An error occurred'}
+                </p>
               </div>
             )}
 

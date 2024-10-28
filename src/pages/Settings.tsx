@@ -5,7 +5,7 @@ import { Save } from 'lucide-react';
 
 export function Settings() {
   const { user } = useAuthStore();
-  const isSuperAdmin = user?.role === 'SUPER_ADMIN';
+  const isSuperAdmin = user?.role === 'SUPERADMIN';
 
   const [formData, setFormData] = useState({
     companyName: 'HealthCare Plus',

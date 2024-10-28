@@ -14,7 +14,7 @@ import { cn } from '../lib/utils';
 
 export function Dashboard() {
   const { user } = useAuthStore();
-  const isSuperAdmin = user?.role === 'SUPER_ADMIN';
+  const isSuperAdmin = user?.role === 'SUPERADMIN';
 
   const stats = [
     {
