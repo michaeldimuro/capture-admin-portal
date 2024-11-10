@@ -21,6 +21,7 @@ export interface Company {
 export interface Medication {
   id: string;
   name: string;
+  image: string;
   description: string;
   dosages: Dosage[];
 }

@@ -64,7 +64,7 @@ export function Dashboard() {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-          <p className="text-gray-500 mt-2">Welcome back, {user?.name}</p>
+          <p className="text-gray-500 mt-2">Welcome back, {user?.firstName}.</p>
         </div>
         <div className="flex items-center gap-4">
           <select className="border border-gray-300 rounded-md px-3 py-1.5 bg-white text-sm">

@@ -11,6 +11,8 @@ const mockMedications: Medication[] = [
     id: '1',
     name: 'Ibuprofen',
     description: 'Pain relief medication',
+    image:
+      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=200",
     dosages: [
       { id: 'd1', medicationId: '1', strength: '200', unit: 'mg' },
       { id: 'd2', medicationId: '1', strength: '400', unit: 'mg' },
@@ -21,6 +23,8 @@ const mockMedications: Medication[] = [
     id: '2',
     name: 'Amoxicillin',
     description: 'Antibiotic medication',
+    image:
+      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=200",
     dosages: [
       { id: 'd4', medicationId: '2', strength: '250', unit: 'mg' },
       { id: 'd5', medicationId: '2', strength: '500', unit: 'mg' },
@@ -39,6 +43,8 @@ export function Medications() {
       id: `med-${Date.now()}`,
       name: data.name,
       description: data.description,
+      image:
+        "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=200",
       dosages: data.dosages.map((d: any, index: number) => ({
         id: `dos-${Date.now()}-${index}`,
         medicationId: `med-${Date.now()}`,

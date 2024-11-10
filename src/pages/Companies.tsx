@@ -98,7 +98,7 @@ export function Companies() {
                       <td className="py-4 px-4">
                         <div className="flex items-center">
                           <img
-                            src={company.logo}
+                            src={company?.logo || "https://placehold.co/200x200/png"}
                             alt={company.name}
                             className="h-10 w-10 rounded-full object-cover"
                           />
@@ -112,12 +112,12 @@ export function Companies() {
                       <td className="py-4 px-4">
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            company.status === "active"
+                            company?.isLive  && !company.isSuspended
                               ? "bg-green-100 text-green-800"
                               : "bg-gray-100 text-gray-800"
                           }`}
                         >
-                          {company.status}
+                          {company?.isLive && !company.isSuspended ? "Active" : "Inactive"}
                         </span>
                       </td>
                       <td className="py-4 px-4">

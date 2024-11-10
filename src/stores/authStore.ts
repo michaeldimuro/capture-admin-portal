@@ -6,7 +6,8 @@ export type UserRole = 'SUPERADMIN' | 'COMPANY_ADMIN';
 interface User {
   id: string;
   role: UserRole;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   companyId?: string;
 }
