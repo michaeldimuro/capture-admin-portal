@@ -91,6 +91,11 @@ export const companiesApi = {
   deleteCompany: async (id: string): Promise<void> => {
     await api.delete(`/admin/tenants/${id}`);
   },
+
+  getCompanyOrders: async (id: string): Promise<any> => {
+    const response = await api.get(`/admin/tenants/${id}/orders`);
+    return response.data;
+  },
 };
 
 export default api;

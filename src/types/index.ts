@@ -24,6 +24,7 @@ export interface Medication {
   image: string;
   description: string;
   dosages: Dosage[];
+  questionnaireId: string;
 }
 
 export interface Dosage {

@@ -6,6 +6,10 @@ import { Card } from "../components/ui/Card";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "../lib/utils";
 import { Button } from "../components/ui/Button";
+import { OrdersTab } from '../components/tabs/OrdersTab';
+// import { PatientsTab } from '../components/tabs/PatientsTab';
+// import { MedicationsTab } from '../components/tabs/MedicationsTab';
+import { OverviewTab } from '../components/tabs/OverviewTab';
 
 export function CompanyDetails() {
   const { id } = useParams();
@@ -61,7 +65,7 @@ export function CompanyDetails() {
               Total Patients
             </h3>
             <p className="text-3xl font-semibold mt-2">
-              {company?.patientsCount || "--"}
+              {company?.patientCount}
             </p>
           </div>
         </Card>
@@ -69,7 +73,7 @@ export function CompanyDetails() {
           <div className="p-6">
             <h3 className="text-sm font-medium text-gray-500">Active Orders</h3>
             <p className="text-3xl font-semibold mt-2">
-              {company?.activeOrders || "--"}
+              {company?.activeOrdersCount}
             </p>
           </div>
         </Card>
@@ -96,7 +100,7 @@ export function CompanyDetails() {
               </span>
             </div>
             <p className="text-3xl font-semibold mt-2">
-              ${company?.revenue?.current?.toLocaleString()}
+              ${company?.orderRevenue?.toLocaleString()}
             </p>
             <p className="text-sm text-gray-500 mt-1">
               Previous: ${company?.revenue?.previous?.toLocaleString() || "--"}
@@ -113,59 +117,21 @@ export function CompanyDetails() {
           <TabTrigger value="medications">Medications</TabTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="font-medium text-gray-900 mb-2">
-                Company Information
-              </h3>
-              <div className="space-y-2">
-                <p>
-                  <span className="text-gray-500">Email:</span> {company?.email}
-                </p>
-                <p>
-                  <span className="text-gray-500">Phone:</span> {company?.phone}
-                </p>
-                <p>
-                  <span className="text-gray-500">Website:</span>{" "}
-                  {company?.website}
-                </p>
-              </div>
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow">
-              <h3 className="font-medium text-gray-900 mb-2">Address</h3>
-              <div className="space-y-2">
-                <p>{company?.address}</p>
-                <p>
-                  {company?.city}, {company?.state} {company?.zipCode}
-                </p>
-              </div>
-            </div>
-          </div>
+        <TabsContent value="overview">
+          <OverviewTab company={company} />
         </TabsContent>
 
-        <TabsContent value="orders" className="bg-white rounded-lg shadow">
-          <div className="p-4">
-            <h3 className="font-medium text-gray-900 mb-4">Order History</h3>
-            <p className="text-gray-500">No orders found.</p>
-          </div>
+        <TabsContent value="orders">
+          <OrdersTab companyId={company.id} />
         </TabsContent>
 
-        <TabsContent value="patients" className="bg-white rounded-lg shadow">
-          <div className="p-4">
-            <h3 className="font-medium text-gray-900 mb-4">Patients</h3>
-            <p className="text-gray-500">No patients found.</p>
-          </div>
+        {/* <TabsContent value="patients">
+          <PatientsTab companyId={company.id} />
         </TabsContent>
 
-        <TabsContent value="medications" className="bg-white rounded-lg shadow">
-          <div className="p-4">
-            <h3 className="font-medium text-gray-900 mb-4">
-              Supported Medications
-            </h3>
-            <p className="text-gray-500">No medications found.</p>
-          </div>
-        </TabsContent>
+        <TabsContent value="medications">
+          <MedicationsTab companyId={company.id} />
+        </TabsContent> */}
       </Tabs>
     </div>
   );

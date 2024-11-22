@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Search,
   MessageCircle,
@@ -122,6 +122,7 @@ export function Support() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [activeTab, setActiveTab] = useState<"conversation" | "notes">("conversation");
 
   const filteredTickets = mockTickets.filter((ticket) => {
     const matchesSearch =
@@ -138,6 +139,14 @@ export function Support() {
 
     return matchesSearch && matchesStatus && matchesPriority && matchesCategory;
   });
+
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [selectedTicket?.messages.length]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -293,8 +302,8 @@ export function Support() {
         title="Ticket Details"
       >
         {selectedTicket && (
-          <div className="p-6 space-y-6">
-            <div className="space-y-4">
+          <div className="p-6 space-y-6 flex flex-col h-full">
+            <div className="space-y-4 flex-grow overflow-y-auto">
               <div className="flex justify-between items-start">
                 <h3 className="text-xl font-semibold">
                   {selectedTicket.subject}
@@ -356,82 +365,108 @@ export function Support() {
               )}
 
               <div className="border-t pt-4">
-                <h4 className="font-medium mb-4">Internal Notes</h4>
-                <div className="space-y-4">
-                  {selectedTicket.notes.map((note) => (
-                    <div key={note.id} className="bg-yellow-50 p-3 rounded-lg">
-                      <p className="text-sm">{note.content}</p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {note.author} -{" "}
-                        {new Date(note.timestamp).toLocaleString()}
-                      </p>
-                    </div>
-                  ))}
-                  <form onSubmit={handleAddNote} className="mt-2">
-                    <textarea
-                      value={newNote}
-                      onChange={(e) => setNewNote(e.target.value)}
-                      placeholder="Add an internal note..."
-                      className="w-full border border-gray-300 rounded-md p-2 text-sm"
-                      rows={2}
-                    />
-                    <div className="mt-2 flex justify-end">
-                      <Button type="submit" size="sm">
-                        <Plus className="h-4 w-4 mr-1" />
-                        Add Note
-                      </Button>
-                    </div>
-                  </form>
+                <div className="flex space-x-4 mb-4">
+                  <button
+                    className={`px-4 py-2 rounded-md ${
+                      activeTab === "conversation"
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 text-gray-700"
+                    }`}
+                    onClick={() => setActiveTab("conversation")}
+                  >
+                    Conversation
+                  </button>
+                  <button
+                    className={`px-4 py-2 rounded-md ${
+                      activeTab === "notes"
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 text-gray-700"
+                    }`}
+                    onClick={() => setActiveTab("notes")}
+                  >
+                    Internal Notes
+                  </button>
                 </div>
-              </div>
 
-              <div className="border-t pt-4">
-                <h4 className="font-medium mb-4">Conversation</h4>
-                <div className="space-y-4">
-                  {selectedTicket.messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`flex ${
-                        message.sender.role === "support"
-                          ? "justify-end"
-                          : "justify-start"
-                      }`}
-                    >
-                      <div
-                        className={`max-w-[80%] rounded-lg p-3 ${
-                          message.sender.role === "support"
-                            ? "bg-blue-100"
-                            : message.sender.role === "system"
-                            ? "bg-gray-100"
-                            : "bg-gray-100"
-                        }`}
-                      >
-                        <p className="text-sm">{message.content}</p>
+                {activeTab === "notes" && (
+                  <div className="space-y-4">
+                    {selectedTicket.notes.map((note) => (
+                      <div key={note.id} className="bg-yellow-50 p-3 rounded-lg">
+                        <p className="text-sm">{note.content}</p>
                         <p className="text-xs text-gray-500 mt-1">
-                          {message.sender.name} -{" "}
-                          {new Date(message.timestamp).toLocaleString()}
+                          {note.author} -{" "}
+                          {new Date(note.timestamp).toLocaleString()}
                         </p>
                       </div>
-                    </div>
-                  ))}
-                </div>
-                <form onSubmit={handleSendMessage} className="mt-4">
-                  <div className="flex items-end space-x-2">
-                    <textarea
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder="Type your message..."
-                      className="flex-1 border border-gray-300 rounded-md p-2 text-sm"
-                      rows={2}
-                    />
-                    <Button type="submit">
-                      <MessageCircle className="h-4 w-4 mr-1" />
-                      Send
-                    </Button>
+                    ))}
+                    <form onSubmit={handleAddNote} className="mt-2">
+                      <textarea
+                        value={newNote}
+                        onChange={(e) => setNewNote(e.target.value)}
+                        placeholder="Add an internal note..."
+                        className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                        rows={2}
+                      />
+                      <div className="mt-2 flex justify-end">
+                        <Button type="submit" size="sm">
+                          <Plus className="h-4 w-4 mr-1" />
+                          Add Note
+                        </Button>
+                      </div>
+                    </form>
                   </div>
-                </form>
+                )}
+
+                {activeTab === "conversation" && (
+                  <div className="space-y-4 overflow-y-auto max-h-60">
+                    {selectedTicket.messages.map((message) => (
+                      <div
+                        key={message.id}
+                        className={`flex ${
+                          message.sender.role === "support"
+                            ? "justify-end"
+                            : "justify-start"
+                        }`}
+                      >
+                        <div
+                          className={`max-w-[80%] rounded-lg p-3 ${
+                            message.sender.role === "support"
+                              ? "bg-blue-100"
+                              : message.sender.role === "system"
+                              ? "bg-gray-100"
+                              : "bg-gray-100"
+                          }`}
+                        >
+                          <p className="text-sm">{message.content}</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {message.sender.name} -{" "}
+                            {new Date(message.timestamp).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    <div ref={messagesEndRef} />
+                  </div>
+                )}
               </div>
             </div>
+            {activeTab === "conversation" && (
+              <form onSubmit={handleSendMessage} className="mt-4 flex-none">
+                <div className="flex items-end space-x-2">
+                  <textarea
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="Type your message..."
+                    className="flex-1 border border-gray-300 rounded-md p-2 text-sm"
+                    rows={2}
+                  />
+                  <Button type="submit">
+                    <MessageCircle className="h-4 w-4 mr-1" />
+                    Send
+                  </Button>
+                </div>
+              </form>
+            )}
           </div>
         )}
       </Drawer>

@@ -3,6 +3,19 @@ import { X, Plus } from 'lucide-react';
 import { Button } from '../ui/Button';
 import type { Medication } from '../../types';
 
+// Mock API call to fetch questionnaires
+const fetchQuestionnaires = async () => {
+  return new Promise<{ id: string; name: string }[]>((resolve) => {
+    setTimeout(() => {
+      resolve([
+        { id: 'q1', name: 'General Health' },
+        { id: 'q2', name: 'Allergy Assessment' },
+        { id: 'q3', name: 'Medication History' },
+      ]);
+    }, 500);
+  });
+};
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -10,6 +23,7 @@ interface Props {
     name: string;
     description: string;
     dosages: { strength: string; unit: string }[];
+    questionnaireId: string;
   }) => void;
   medication?: Medication | null;
 }
@@ -18,6 +32,8 @@ export function AddMedicationModal({ isOpen, onClose, onSubmit, medication }: Pr
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [dosages, setDosages] = useState([{ strength: '', unit: 'mg' }]);
+  const [questionnaires, setQuestionnaires] = useState<{ id: string; name: string }[]>([]);
+  const [selectedQuestionnaire, setSelectedQuestionnaire] = useState('');
 
   useEffect(() => {
     if (medication) {
@@ -29,18 +45,27 @@ export function AddMedicationModal({ isOpen, onClose, onSubmit, medication }: Pr
           unit: d.unit,
         }))
       );
+      setSelectedQuestionnaire(medication.questionnaireId || '');
     } else {
       setName('');
       setDescription('');
       setDosages([{ strength: '', unit: 'mg' }]);
+      setSelectedQuestionnaire('');
     }
   }, [medication]);
+
+  useEffect(() => {
+    // Fetch questionnaires when the modal opens
+    if (isOpen) {
+      fetchQuestionnaires().then(setQuestionnaires);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ name, description, dosages });
+    onSubmit({ name, description, dosages, questionnaireId: selectedQuestionnaire });
     onClose();
   };
 
@@ -85,6 +110,23 @@ export function AddMedicationModal({ isOpen, onClose, onSubmit, medication }: Pr
               rows={3}
               required
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Questionnaire</label>
+            <select
+              value={selectedQuestionnaire}
+              onChange={(e) => setSelectedQuestionnaire(e.target.value)}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+              required
+            >
+              <option value="" disabled>Select a questionnaire</option>
+              {questionnaires.map((q) => (
+                <option key={q.id} value={q.id}>
+                  {q.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>

@@ -34,7 +34,7 @@ export function Sidebar() {
           { href: '/support', icon: HeadphonesIcon, label: 'Support' },
         ] 
       : [
-          { href: '/medication-offerings', icon: Pill, label: 'Medication Offerings' },
+          { href: '/medication-offerings', icon: Pill, label: 'Offerings' },
           { href: '/orders', icon: ShoppingCart, label: 'Orders' },
           { href: '/patients', icon: Users, label: 'Patients' },
         ]

@@ -18,6 +18,7 @@ const mockMedications: Medication[] = [
       { id: 'd2', medicationId: '1', strength: '400', unit: 'mg' },
       { id: 'd3', medicationId: '1', strength: '600', unit: 'mg' },
     ],
+    questionnaireId: 'q1',
   },
   {
     id: '2',
@@ -29,6 +30,7 @@ const mockMedications: Medication[] = [
       { id: 'd4', medicationId: '2', strength: '250', unit: 'mg' },
       { id: 'd5', medicationId: '2', strength: '500', unit: 'mg' },
     ],
+    questionnaireId: 'q2',
   },
 ];
 
@@ -38,23 +40,32 @@ export function Medications() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingMedication, setEditingMedication] = useState<Medication | null>(null);
 
-  const handleAddMedication = (data: any) => {
+  const handleAddOrEditMedication = (data: any) => {
     const newMedication: Medication = {
-      id: `med-${Date.now()}`,
+      id: editingMedication ? editingMedication.id : `med-${Date.now()}`,
       name: data.name,
       description: data.description,
       image:
         "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=200",
       dosages: data.dosages.map((d: any, index: number) => ({
-        id: `dos-${Date.now()}-${index}`,
-        medicationId: `med-${Date.now()}`,
+        id: editingMedication ? editingMedication.dosages[index]?.id || `dos-${Date.now()}-${index}` : `dos-${Date.now()}-${index}`,
+        medicationId: editingMedication ? editingMedication.id : `med-${Date.now()}`,
         strength: d.strength,
         unit: d.unit,
       })),
+      questionnaireId: data.questionnaireId,
     };
 
-    setMedications([...medications, newMedication]);
+    if (editingMedication) {
+      // Update existing medication
+      setMedications(medications.map(m => m.id === editingMedication.id ? newMedication : m));
+    } else {
+      // Add new medication
+      setMedications([...medications, newMedication]);
+    }
+
     setIsAddModalOpen(false);
+    setEditingMedication(null);
   };
 
   const handleEditMedication = (medication: Medication) => {
@@ -168,7 +179,7 @@ export function Medications() {
           setIsAddModalOpen(false);
           setEditingMedication(null);
         }}
-        onSubmit={handleAddMedication}
+        onSubmit={handleAddOrEditMedication}
         medication={editingMedication}
       />
     </>

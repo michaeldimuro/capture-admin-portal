@@ -19,6 +19,7 @@ const availableMedications: Medication[] = [
       { id: "d2", medicationId: "1", strength: "400", unit: "mg" },
       { id: "d3", medicationId: "1", strength: "600", unit: "mg" },
     ],
+    questionnaireId: "q1",
   },
   {
     id: "2",
@@ -30,6 +31,7 @@ const availableMedications: Medication[] = [
       { id: "d4", medicationId: "2", strength: "250", unit: "mg" },
       { id: "d5", medicationId: "2", strength: "500", unit: "mg" },
     ],
+    questionnaireId: "q2",
   },
 ];
 
