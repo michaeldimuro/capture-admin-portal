@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Company } from '../types';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3030/dev', // Replace with your actual API URL
+  baseURL: `${import.meta.env.VITE_API_BASE_URL}`, // Replace with your actual API URL
   headers: {
     'Content-Type': 'application/json',
   },
