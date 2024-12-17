@@ -12,8 +12,15 @@ export function OverviewTab({ company }: any) {
       <div className="bg-white p-4 rounded-lg shadow">
         <h3 className="font-medium text-gray-900 mb-2">Address</h3>
         <div className="space-y-2">
-          <p>{company?.address}</p>
-          <p>{company?.city}, {company?.state} {company?.zipCode}</p>
+          {company?.streetAddress && company?.city && company?.state && company?.zipCode ? (
+            <>
+              <p>{company?.streetAddress1}</p>
+              <p>{company?.city}, {company?.state} {company?.zipCode}</p>
+            </>
+          ) : (
+            <p>No address</p>
+          )}
+          
         </div>
       </div>
     </div>
