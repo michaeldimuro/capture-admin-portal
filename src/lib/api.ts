@@ -70,6 +70,10 @@ export const companiesApi = {
     const response = await api.get(`/admin/tenants/${id}`);
     return response.data;
   },
+  setCompanyConfigurationSettings: async (id: string, payload: {}): Promise<any> => {
+    const response = await api.post(`/admin/tenants/${id}/integration-configuration`, payload)
+    return response.data
+  },
 
   createCompany: async (data: {
     name: string;

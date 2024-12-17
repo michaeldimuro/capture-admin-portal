@@ -7,9 +7,8 @@ import { TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "../lib/utils";
 import { Button } from "../components/ui/Button";
 import { OrdersTab } from '../components/tabs/OrdersTab';
-// import { PatientsTab } from '../components/tabs/PatientsTab';
-// import { MedicationsTab } from '../components/tabs/MedicationsTab';
 import { OverviewTab } from '../components/tabs/OverviewTab';
+import { CompanySettingsTab } from '../components/tabs/CompanySettingsTab';
 
 export function CompanyDetails() {
   const { id } = useParams();
@@ -115,6 +114,7 @@ export function CompanyDetails() {
           <TabTrigger value="orders">Orders</TabTrigger>
           <TabTrigger value="patients">Patients</TabTrigger>
           <TabTrigger value="medications">Medications</TabTrigger>
+          <TabTrigger value="settings">Settings</TabTrigger>
         </TabsList>
 
         <TabsContent value="overview">
@@ -125,13 +125,23 @@ export function CompanyDetails() {
           <OrdersTab companyId={company.id} />
         </TabsContent>
 
-        {/* <TabsContent value="patients">
-          <PatientsTab companyId={company.id} />
+        <TabsContent value="patients">
+          <div className="bg-white rounded-lg shadow p-4">
+            <h3 className="font-medium text-gray-900 mb-4">Patients</h3>
+            <p className="text-gray-500">Patient management coming soon.</p>
+          </div>
         </TabsContent>
 
         <TabsContent value="medications">
-          <MedicationsTab companyId={company.id} />
-        </TabsContent> */}
+          <div className="bg-white rounded-lg shadow p-4">
+            <h3 className="font-medium text-gray-900 mb-4">Medications</h3>
+            <p className="text-gray-500">Medication management coming soon.</p>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="settings">
+          <CompanySettingsTab companyId={company?.id} apiKeys={company?.configurations?.apiKeys} />
+        </TabsContent>
       </Tabs>
     </div>
   );

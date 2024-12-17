@@ -17,6 +17,14 @@ export function useCompanies() {
     },
   });
 
+  const setCompanyIntegrationConfigurations = useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: {} }) =>
+      companiesApi.setCompanyConfigurationSettings(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['companies'] });
+    }
+  })
+
   const updateCompanyMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Company> }) =>
       companiesApi.updateCompany(id, data),
@@ -36,6 +44,7 @@ export function useCompanies() {
     companies: companiesQuery.data,
     isLoading: companiesQuery.isLoading,
     error: companiesQuery.error,
+    setCompanyIntegrationConfigurations: setCompanyIntegrationConfigurations.mutate,
     createCompany: createCompanyMutation.mutate,
     updateCompany: updateCompanyMutation.mutate,
     deleteCompany: deleteCompanyMutation.mutate,
