@@ -45,16 +45,16 @@ export function CompanyDetails() {
 
   return (
     <div className="p-6">
-      <div className="flex items-center gap-4 mb-6">
-        <img
-          src={company?.logo || "https://placehold.co/200x200/png"}
-          alt={`${company.name} logo`}
-          className="w-16 h-16 rounded-full"
-        />
+      <div className="flex items-center gap-4 mb-6 justify-between">
         <div>
           <h1 className="text-2xl font-bold">{company.name}</h1>
           <p className="text-gray-500">Company ID: {company.id}</p>
         </div>
+        <img
+          src={company?.logo || "https://placehold.co/200x200/png"}
+          alt={`${company.name} logo`}
+          className="h-16"
+        />
       </div>
 
       <div className="grid grid-cols-3 gap-6 mb-6">
