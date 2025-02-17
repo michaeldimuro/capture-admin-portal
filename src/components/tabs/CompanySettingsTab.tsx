@@ -13,9 +13,11 @@ interface IntegrationSettings {
     clientId: string;
     clientSecret: string;
   };
-  stripe?: {
-    publishableKey: string;
-    secretKey: string;
+  authNet?: {
+    apiLoginId: string;
+    clientKey: string;
+    transactionKey: string;
+    signatureKey: string;
   };
 }
 
@@ -39,9 +41,11 @@ export function CompanySettingsTab({ companyId, apiKeys }: SettingsTabProps) {
       clientId: apiKeys?.mdi?.clientId || "",
       clientSecret: apiKeys?.mdi?.clientSecret || "",
     },
-    stripe: {
-      publishableKey: apiKeys?.stripe?.publishableKey || "",
-      secretKey: apiKeys?.stripe?.secretKey || "",
+    authNet: {
+      apiLoginId: apiKeys?.authNet?.apiLoginId || "",
+      clientKey: apiKeys?.authNet?.clientKey || "",
+      transactionKey: apiKeys?.authNet?.transactionKey || "",
+      signatureKey: apiKeys?.authNet?.signatureKey || "",
     },
   });
 
@@ -183,31 +187,55 @@ export function CompanySettingsTab({ companyId, apiKeys }: SettingsTabProps) {
         <Card>
           <div className="p-6">
             <h4 className="text-base font-medium text-gray-900 mb-4">
-              Stripe Integration
+              Authorize.net Integration
             </h4>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Publishable Key
+                  API Login ID
                 </label>
                 {renderField(
-                  "Publishable Key",
-                  settings?.stripe?.publishableKey ?? "",
-                  "publishableKey",
-                  "stripe",
-                  "publishableKey"
+                  "API Login ID",
+                  settings?.authNet?.apiLoginId ?? "",
+                  "apiLoginId",
+                  "authNet",
+                  "apiLoginId"
                 )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Secret Key
+                  Client Key
                 </label>
                 {renderField(
-                  "Secret Key",
-                  settings?.stripe?.secretKey ?? "",
-                  "secretKey",
-                  "stripe",
-                  "secretKey"
+                  "Client Key",
+                  settings?.authNet?.clientKey ?? "",
+                  "clientKey",
+                  "authNet",
+                  "clientKey"
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Transaction Key
+                </label>
+                {renderField(
+                  "Transaction Key",
+                  settings?.authNet?.transactionKey ?? "",
+                  "transactionKey",
+                  "authNet",
+                  "transactionKey"
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Signature Key
+                </label>
+                {renderField(
+                  "Signature Key",
+                  settings?.authNet?.signatureKey ?? "",
+                  "signatureKey",
+                  "authNet",
+                  "signatureKey"
                 )}
               </div>
             </div>
