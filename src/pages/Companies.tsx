@@ -100,7 +100,7 @@ export function Companies() {
                           <img
                             src={company?.logo || "https://placehold.co/200x200/png"}
                             alt={company.name}
-                            className="h-10 w-10 rounded-full object-cover"
+                            className="h-10 w-10 rounded-full object-contain"
                           />
                           <span className="ml-4 font-medium">
                             {company.name}
