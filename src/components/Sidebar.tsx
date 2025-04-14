@@ -20,14 +20,13 @@ interface SidebarProps {
 
 export function Sidebar({ closeSidebar }: SidebarProps) {
   const location = useLocation();
-  const navigate = useNavigate();
   const { user } = useAuthStore();
-  const { logout } = useAuth()
+  const { logout } = useAuth();
   const isSuperAdmin = user?.role === 'SUPERADMIN';
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    // No need to manually navigate as useAuth.logout() already redirects
   };
 
   const links = [

@@ -15,9 +15,9 @@ import { PatientDetails } from './pages/PatientDetails';
 import { useAuthStore } from './stores/authStore';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const { user } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   
-  if (!user) {
+  if (!isAuthenticated()) {
     return <Navigate to="/login" />;
   }
 

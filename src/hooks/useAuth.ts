@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../lib/api/services';
 import { useAuthStore } from '../stores/authStore';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { queryKeys } from '../lib/api/queryKeys';
 
 // Session inactivity timeout in milliseconds (15 minutes)
@@ -10,6 +10,7 @@ const INACTIVITY_TIMEOUT = 15 * 60 * 1000;
 
 export function useAuth() {
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const { login: storeLogin, logout: removeUser } = useAuthStore();
   const inactivityTimerRef = useRef<number | null>(null);
@@ -25,6 +26,24 @@ export function useAuth() {
       logout();
     }, INACTIVITY_TIMEOUT);
   };
+  
+  // Memoize the logout function to prevent unnecessary re-renders
+  const logout = useCallback(() => {
+    authService.logout();
+    removeUser();
+    
+    // Clear inactivity timer
+    if (inactivityTimerRef.current) {
+      window.clearTimeout(inactivityTimerRef.current);
+      inactivityTimerRef.current = null;
+    }
+    
+    // Clear all query caches when logging out
+    queryClient.clear();
+    
+    // Always redirect to login page when logging out
+    navigate('/login');
+  }, [navigate, removeUser, queryClient]);
   
   // Set up event listeners for user activity
   useEffect(() => {
@@ -55,7 +74,7 @@ export function useAuth() {
       
       window.removeEventListener('auth:sessionExpired', logout);
     };
-  }, []);
+  }, [logout]);
 
   const loginMutation = useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
@@ -70,22 +89,6 @@ export function useAuth() {
       navigate('/');
     },
   });
-
-  const logout = () => {
-    authService.logout();
-    removeUser();
-    
-    // Clear inactivity timer
-    if (inactivityTimerRef.current) {
-      window.clearTimeout(inactivityTimerRef.current);
-      inactivityTimerRef.current = null;
-    }
-    
-    // Clear all query caches when logging out
-    queryClient.clear();
-    
-    navigate('/login');
-  };
 
   return {
     login: loginMutation.mutate,
