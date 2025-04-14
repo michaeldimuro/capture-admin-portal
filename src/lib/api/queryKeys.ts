@@ -7,6 +7,10 @@ export const queryKeys = {
     detail: (id: string) => ['companies', id] as const,
     orders: (id: string) => ['companies', id, 'orders'] as const,
   },
+  orders: {
+    details: (id: string) => ['orders', id] as const,
+    all: () => ['orders'] as const,
+  },
   dashboard: {
     stats: ['dashboard', 'stats'] as const,
   },

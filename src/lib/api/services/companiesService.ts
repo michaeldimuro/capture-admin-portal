@@ -42,4 +42,19 @@ export const companiesService = {
     const response = await api.get(`/admin/tenants/${id}/orders`);
     return response.data;
   },
+  
+  getOrderDetails: async (orderId: string): Promise<any> => {
+    const response = await api.get(`/admin/orders/${orderId}`);
+    return response.data;
+  },
+  
+  refundOrder: async (orderId: string, amount?: number, reason?: string): Promise<any> => {
+    const response = await api.post(`/admin/orders/${orderId}/refund`, { amount, reason });
+    return response.data;
+  },
+  
+  cancelOrder: async (orderId: string, reason?: string): Promise<any> => {
+    const response = await api.post(`/admin/orders/${orderId}/cancel`, { reason });
+    return response.data;
+  }
 }; 
