@@ -17,27 +17,15 @@ export interface LoginResponse {
 export const authService = {
   login: async (email: string, password: string): Promise<LoginResponse> => {
     const response = await api.post('/auth/login', { email, password });
-    
-    // Store tokens when login is successful
-    if (response.data.accessToken) {
-      localStorage.setItem('token', response.data.accessToken);
-      localStorage.setItem('refreshToken', response.data.refreshToken);
-    }
-    
     return response.data;
   },
   
-  refreshToken: async (): Promise<{ accessToken: string, refreshToken: string }> => {
-    const refreshToken = localStorage.getItem('refreshToken');
+  refreshToken: async (refreshToken: string): Promise<{ accessToken: string, refreshToken: string }> => {
     if (!refreshToken) {
       throw new Error('No refresh token available');
     }
     
     const response = await api.post('/auth/refresh', { refreshToken });
-    
-    // Update stored tokens
-    localStorage.setItem('token', response.data.accessToken);
-    localStorage.setItem('refreshToken', response.data.refreshToken);
     
     return {
       accessToken: response.data.accessToken,
@@ -46,8 +34,13 @@ export const authService = {
   },
   
   logout: async (): Promise<void> => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
+    // Only performs backend logout operations if needed
+    // Token cleanup is handled by the auth store
+    try {
+      await api.post('/auth/logout');
+    } catch (error) {
+      // Silently fail, logout should still proceed even if the API call fails
+    }
   },
   
   validateToken: async (token: string): Promise<boolean> => {

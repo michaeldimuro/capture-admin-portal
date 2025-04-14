@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
@@ -13,9 +13,37 @@ import { OrderDetails } from './pages/OrderDetails';
 import { Patients } from './pages/Patients';
 import { PatientDetails } from './pages/PatientDetails';
 import { useAuthStore } from './stores/authStore';
+import { useEffect } from 'react';
+import { authService } from './lib/api/services';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, getToken, logout } = useAuthStore();
+  const navigate = useNavigate();
+  
+  // Check token validity on route access
+  useEffect(() => {
+    const validateToken = async () => {
+      const token = getToken();
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+      
+      try {
+        const isValid = await authService.validateToken(token);
+        if (!isValid) {
+          // Logout and redirect
+          logout();
+          navigate('/login');
+        }
+      } catch (error) {
+        // In case of any error, redirect to login
+        navigate('/login');
+      }
+    };
+    
+    validateToken();
+  }, [navigate, getToken, logout]);
   
   if (!isAuthenticated()) {
     return <Navigate to="/login" />;

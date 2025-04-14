@@ -16,8 +16,13 @@ interface User {
 
 interface AuthState {
   user: User | null;
-  login: (user: User) => Promise<boolean>;
+  token: string | null;
+  refreshToken: string | null;
+  login: (user: User, token: string, refreshToken: string) => void;
   logout: () => void;
+  setTokens: (token: string, refreshToken: string) => void;
+  getToken: () => string | null;
+  getRefreshToken: () => string | null;
   isAuthenticated: () => boolean;
 }
 
@@ -43,22 +48,22 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
-      login: async (user: User) => {
-        if (user) {
-          set({ user });
-          return true;
-        }
-        return false;
-      },
-      logout: () => set({ user: null }),
-      isAuthenticated: () => {
-        return !!get().user && !!localStorage.getItem('token');
-      }
+      token: null,
+      refreshToken: null,
+      login: (user, token, refreshToken) => set({ user, token, refreshToken }),
+      logout: () => set({ user: null, token: null, refreshToken: null }),
+      setTokens: (token, refreshToken) => set({ token, refreshToken }),
+      getToken: () => get().token,
+      getRefreshToken: () => get().refreshToken,
+      isAuthenticated: () => !!get().token && !!get().user,
     }),
     {
       name: 'auth-storage',
-      // Only persist the user data, not the token (handled separately)
-      partialize: (state) => ({ user: state.user }),
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+        refreshToken: state.refreshToken,
+      }),
     }
   )
 );

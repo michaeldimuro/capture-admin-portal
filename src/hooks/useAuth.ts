@@ -12,7 +12,7 @@ export function useAuth() {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
-  const { login: storeLogin, logout: removeUser } = useAuthStore();
+  const { login: storeLogin, logout: removeUser, getToken } = useAuthStore();
   const inactivityTimerRef = useRef<number | null>(null);
   
   // Reset the inactivity timer when user activity is detected
@@ -45,6 +45,24 @@ export function useAuth() {
     navigate('/login');
   }, [navigate, removeUser, queryClient]);
   
+  // Validate session token on app initialization
+  const validateSession = useCallback(async () => {
+    const token = getToken();
+    if (!token) return false;
+    
+    try {
+      const isValid = await authService.validateToken(token);
+      if (!isValid) {
+        logout();
+        return false;
+      }
+      return true;
+    } catch (error) {
+      logout();
+      return false;
+    }
+  }, [logout, getToken]);
+  
   // Set up event listeners for user activity
   useEffect(() => {
     // Set up event listeners to reset the timer on user activity
@@ -58,8 +76,10 @@ export function useAuth() {
     window.addEventListener('auth:sessionExpired', logout);
     
     // Initial timer setup if user is logged in
-    if (localStorage.getItem('token')) {
+    if (getToken()) {
       resetInactivityTimer();
+      // Validate the token on component mount
+      validateSession();
     }
     
     // Cleanup event listeners on component unmount
@@ -74,7 +94,7 @@ export function useAuth() {
       
       window.removeEventListener('auth:sessionExpired', logout);
     };
-  }, [logout]);
+  }, [logout, validateSession, getToken]);
 
   const loginMutation = useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
@@ -82,7 +102,7 @@ export function useAuth() {
       return response;
     },
     onSuccess: (data) => {
-      storeLogin(data.user);
+      storeLogin(data.user, data.accessToken, data.refreshToken);
       resetInactivityTimer(); // Start inactivity timer
       // Invalidate any relevant queries that need refreshing after login
       queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.stats });

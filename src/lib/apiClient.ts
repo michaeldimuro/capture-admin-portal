@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useAuthStore } from '../stores/authStore';
 
 const api = axios.create({
   baseURL: `${import.meta.env.VITE_API_BASE_URL}`, 
@@ -29,7 +30,7 @@ const processQueue = (error: Error | null, token: string | null = null) => {
 };
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = useAuthStore.getState().getToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -42,7 +43,18 @@ api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    const refreshToken = localStorage.getItem('refreshToken');
+    const refreshToken = useAuthStore.getState().getRefreshToken();
+    
+    // Check if error is 403 (Forbidden) - handle as session expired
+    if (error.response?.status === 403) {
+      // Clear tokens by logging out the user
+      useAuthStore.getState().logout();
+      
+      // Trigger logout event
+      window.dispatchEvent(new CustomEvent('auth:sessionExpired'));
+      
+      return Promise.reject(error);
+    }
     
     // If the error is not 401 or it's already retried, reject
     if (
@@ -75,8 +87,8 @@ api.interceptors.response.use(
       const response = await api.post('/auth/refresh', { refreshToken });
       const { accessToken: newToken, refreshToken: newRefreshToken } = response.data;
       
-      localStorage.setItem('token', newToken);
-      localStorage.setItem('refreshToken', newRefreshToken);
+      // Update tokens in auth store
+      useAuthStore.getState().setTokens(newToken, newRefreshToken);
       
       // Update authorization header for the original request
       originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
@@ -88,9 +100,8 @@ api.interceptors.response.use(
     } catch (refreshError) {
       processQueue(refreshError as Error, null);
       
-      // Clear tokens and redirect to login
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
+      // Clear tokens by logging out
+      useAuthStore.getState().logout();
       
       // Trigger logout event
       window.dispatchEvent(new CustomEvent('auth:sessionExpired'));
