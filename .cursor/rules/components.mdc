@@ -1,0 +1,186 @@
+---
+description: React component design best practices
+globs: 
+alwaysApply: false
+---
+Here’s a professional and comprehensive `REACT_COMPONENT_BEST_PRACTICES.md` file that outlines best practices for designing clean, scalable React components:
+
+---
+
+```markdown
+# ⚛️ React Component Design — Best Practices
+
+This guide outlines best practices for writing clean, maintainable, and scalable React components.
+
+---
+
+## 📁 Recommended Component Structure
+
+```
+src/
+├── components/
+│   ├── Button/
+│   │   ├── Button.jsx
+│   │   ├── Button.module.css
+│   │   └── index.js
+│   └── Header/
+│       ├── Header.jsx
+│       ├── Header.module.css
+│       └── index.js
+```
+
+---
+
+## ✅ Best Practices
+
+### 1. **Prefer Functional Components + Hooks**
+
+Use functional components with React Hooks instead of class components.
+
+```jsx
+function UserCard({ name }) {
+  return <div>Hello, {name}</div>;
+}
+```
+
+---
+
+### 2. **Keep Components Small & Focused**
+
+- Follow the **Single Responsibility Principle**.
+- Split large components into smaller ones.
+- If a component exceeds ~100 lines, it's time to refactor.
+
+---
+
+### 3. **Use Props Explicitly**
+
+Declare prop types clearly. Avoid using props as an arbitrary object.
+
+```jsx
+function Alert({ message, type }) {
+  return <div className={`alert ${type}`}>{message}</div>;
+}
+```
+
+---
+
+### 4. **Use `useEffect` Carefully**
+
+- Always define dependencies.
+- Avoid side effects in render logic.
+- Cleanup subscriptions or intervals.
+
+```jsx
+useEffect(() => {
+  const interval = setInterval(fetchData, 5000);
+  return () => clearInterval(interval);
+}, []);
+```
+
+---
+
+### 5. **Lift State Up When Needed**
+
+Share state between sibling components by lifting it to the nearest common ancestor.
+
+---
+
+### 6. **Use Composition Over Inheritance**
+
+Build flexible components using children or props, not class inheritance.
+
+```jsx
+function Card({ children }) {
+  return <div className="card">{children}</div>;
+}
+```
+
+---
+
+### 7. **Style Locally and Modularly**
+
+Use CSS Modules, Tailwind, or styled-components to avoid global styles clashing.
+
+```jsx
+import styles from './Button.module.css';
+
+function Button() {
+  return <button className={styles.primary}>Click me</button>;
+}
+```
+
+---
+
+### 8. **Use PropTypes or TypeScript**
+
+Validate component props to improve reliability.
+
+```jsx
+import PropTypes from 'prop-types';
+
+MyComponent.propTypes = {
+  title: PropTypes.string.isRequired,
+  count: PropTypes.number,
+};
+```
+
+---
+
+### 9. **Memoize Expensive Operations**
+
+Use `React.memo`, `useMemo`, and `useCallback` when working with costly computations or frequent renders.
+
+```jsx
+const memoizedValue = useMemo(() => expensiveCalculation(input), [input]);
+```
+
+---
+
+### 10. **Test Components in Isolation**
+
+Write unit tests for components using tools like:
+
+- Jest
+- React Testing Library
+- Cypress (for E2E)
+
+---
+
+## 🔄 Component Lifecycle & Patterns
+
+| Concern            | Best Practice                        |
+|-------------------|--------------------------------------|
+| Data fetching      | `useEffect` or RTK Query/SWR         |
+| Form management    | Controlled components or `react-hook-form` |
+| Conditional logic  | Ternaries or early returns           |
+| Rendering lists    | Always use a unique `key` prop       |
+
+---
+
+## 🚫 Anti-Patterns to Avoid
+
+| ❌ Anti-Pattern                   | ✅ Use Instead                          |
+|----------------------------------|----------------------------------------|
+| Large monolithic components      | Break into smaller, reusable pieces     |
+| Logic inside JSX                 | Move to variables or hooks             |
+| Anonymous functions in JSX       | Memoize with `useCallback` if needed   |
+| Deep prop drilling               | Use context or state managers like Redux/Zustand |
+| `any` type everywhere (TS)       | Define clear types or interfaces       |
+
+---
+
+## 🔗 Additional Resources
+
+- [React Docs](https://reactjs.org/docs/getting-started.html)
+- [React Hooks Rules](https://reactjs.org/docs/hooks-rules.html)
+- [React Patterns](https://reactpatterns.js.org/)
+- [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
+
+---
+
+By following these best practices, your React components will be more modular, readable, and maintainable—leading to better scalability and developer experience.
+
+```
+
+Let me know if you'd like a TypeScript-oriented version or integration tips for specific libraries like Zustand, RTK Query, or Tailwind!

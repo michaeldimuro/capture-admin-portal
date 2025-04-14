@@ -10,12 +10,15 @@ interface User {
   lastName: string;
   email: string;
   companyId?: string;
+  tenantId?: string;
+  schemaName?: string;
 }
 
 interface AuthState {
   user: User | null;
   login: (user: User) => Promise<boolean>;
   logout: () => void;
+  isAuthenticated: () => boolean;
 }
 
 // const mockUsers = [
@@ -38,7 +41,7 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       login: async (user: User) => {
         if (user) {
@@ -48,9 +51,14 @@ export const useAuthStore = create<AuthState>()(
         return false;
       },
       logout: () => set({ user: null }),
+      isAuthenticated: () => {
+        return !!get().user && !!localStorage.getItem('token');
+      }
     }),
     {
       name: 'auth-storage',
+      // Only persist the user data, not the token (handled separately)
+      partialize: (state) => ({ user: state.user }),
     }
   )
 );

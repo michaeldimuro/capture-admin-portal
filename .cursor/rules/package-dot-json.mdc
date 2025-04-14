@@ -1,0 +1,27 @@
+---
+description: 
+globs: package.json,package-lock.json
+alwaysApply: false
+---
+# 📦 Package Management Rules
+
+To ensure consistency and avoid dependency issues across all environments, please follow the rules below when working with `package.json` and managing project dependencies.
+
+---
+
+## 🚫 Do NOT Edit `package.json` Directly
+
+### ❌ Forbidden:
+- Manually adding or removing entries in `dependencies` or `devDependencies`.
+- Editing version numbers directly.
+- Renaming or moving script commands inside `scripts`.
+
+---
+
+## ✅ Required: Use `npm` or `yarn` Commands
+
+### Always install or remove packages using the CLI:
+- To install a package:
+  ```bash
+  npm install <package-name>        # For production dependency
+  npm install --save-dev <package>  # For development dependency

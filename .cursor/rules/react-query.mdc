@@ -1,0 +1,221 @@
+---
+description: Best practices for react-query implementation in application
+globs: 
+alwaysApply: false
+---
+Here’s a comprehensive `REACT_QUERY_BEST_PRACTICES.md` file outlining **best practices** for using **React Query** (now known as **TanStack Query**) effectively in your application:
+
+---
+
+```markdown
+# ⚛️ React Query (TanStack Query) — Best Practices
+
+This guide outlines the best practices for using React Query (TanStack Query) to manage server state in modern React applications.
+
+---
+
+## 📚 Overview
+
+React Query is a powerful library for:
+- Fetching, caching, and syncing server data
+- Background updates and stale data management
+- Avoiding unnecessary prop drilling or global state
+
+---
+
+## 📁 Suggested Project Structure
+
+```
+src/
+├── api/
+│   └── client.js              # Axios/fetch config
+│
+├── hooks/
+│   ├── useUsersQuery.js       # Query hook per domain
+│   └── useCreateUserMutation.js
+│
+├── components/
+│   └── UserList.jsx
+│
+├── App.jsx
+└── index.js                   # Wrap app with QueryClientProvider
+```
+
+---
+
+## ✅ Best Practices
+
+### 1. **Wrap App with `QueryClientProvider`**
+
+```js
+// index.js
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
+
+<React.StrictMode>
+  <QueryClientProvider client={queryClient}>
+    <App />
+  </QueryClientProvider>
+</React.StrictMode>
+```
+
+---
+
+### 2. **Use Custom Hooks per Resource**
+
+Encapsulate logic in reusable hooks:
+
+```js
+// hooks/useUsersQuery.js
+import { useQuery } from '@tanstack/react-query';
+import axios from '../api/client';
+
+export const useUsersQuery = () =>
+  useQuery(['users'], () => axios.get('/users').then(res => res.data));
+```
+
+---
+
+### 3. **Use Meaningful Query Keys**
+
+Use arrays for query keys to enable fine-grained cache control and invalidation.
+
+```js
+useQuery(['user', userId], () => fetchUserById(userId));
+```
+
+---
+
+### 4. **Set Sensible Defaults Globally**
+
+```js
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60, // 1 min
+    },
+  },
+});
+```
+
+---
+
+### 5. **Use `select` to Transform Data**
+
+Avoid doing transformations in the component:
+
+```js
+useQuery(['users'], fetchUsers, {
+  select: data => data.map(user => user.name),
+});
+```
+
+---
+
+### 6. **Use `enabled` to Conditionally Fetch**
+
+```js
+useQuery(['user', userId], fetchUser, {
+  enabled: !!userId,
+});
+```
+
+---
+
+### 7. **Use Mutations for Create/Update/Delete**
+
+```js
+const mutation = useMutation(createUser, {
+  onSuccess: () => {
+    queryClient.invalidateQueries(['users']);
+  },
+});
+```
+
+---
+
+### 8. **Use `invalidateQueries` to Refetch**
+
+After a mutation or state change, invalidate relevant queries:
+
+```js
+queryClient.invalidateQueries(['users']);
+```
+
+---
+
+### 9. **Prefetch Data for Faster UX**
+
+```js
+await queryClient.prefetchQuery(['user', id], () => fetchUserById(id));
+```
+
+---
+
+### 10. **Hydrate/Dehydrate for SSR**
+
+Use `dehydrate()` and `Hydrate` for server-side rendering (Next.js, etc.).
+
+---
+
+## 🔄 Query Lifecycle Tips
+
+| Scenario               | Best Tool          |
+|------------------------|--------------------|
+| Load once, then cache  | `useQuery` + `staleTime` |
+| User submits form      | `useMutation`      |
+| Conditionally fetch    | `enabled` option   |
+| Auto-refresh data      | `refetchInterval`  |
+| Transform response     | `select` option    |
+
+---
+
+## 🚫 Common Mistakes to Avoid
+
+| ❌ Bad Practice                        | ✅ Best Practice                     |
+|---------------------------------------|--------------------------------------|
+| Using global state for server data    | Use React Query                     |
+| Refetching everything after mutation  | Use targeted `invalidateQueries`    |
+| Not setting `staleTime`               | Configure appropriate freshness     |
+| Manual loading and error states       | Use `isLoading`, `isFetching`, `error` |
+| Fetching in `useEffect`               | Replace with `useQuery`             |
+
+---
+
+## 🧪 Testing Tips
+
+- Use `QueryClientProvider` in test wrappers
+- Use `jest` or `msw` to mock server responses
+- Reset cache between tests with `queryClient.clear()`
+
+---
+
+## 🧰 Tooling & Devtools
+
+- Install React Query Devtools for debugging:
+```bash
+npm install @tanstack/react-query-devtools
+```
+
+```js
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+<QueryClientProvider client={queryClient}>
+  <App />
+  <ReactQueryDevtools />
+</QueryClientProvider>
+```
+
+---
+
+## 📚 Resources
+
+- [TanStack Query Docs](https://tanstack.com/query/latest/docs)
+- [React Query GitHub](https://github.com/TanStack/query)
+- [React Query Examples](https://tanstack.com/query/latest/docs/framework/react/examples)
+
+---
+
+By following these best practices, your application will have a robust, efficient, and scalable data-fetching architecture using React Query.

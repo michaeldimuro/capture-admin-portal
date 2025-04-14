@@ -1,0 +1,190 @@
+---
+description: zustand implementation best practices
+globs: 
+alwaysApply: false
+---
+Here’s a polished `ZUSTAND_BEST_PRACTICES.md` file outlining recommended patterns and best practices when using **Zustand** for state management in a React project:
+
+---
+
+```markdown
+# 🐻 Zustand State Management — Best Practices
+
+Zustand is a small, fast, and scalable state-management solution for React. This document outlines the best practices for using Zustand effectively in real-world applications.
+
+---
+
+## 📁 Recommended Structure
+
+```
+src/
+├── stores/
+│   ├── useUserStore.js
+│   ├── useCartStore.js
+│   └── index.js           # Optional aggregator
+```
+
+---
+
+## ✅ Best Practices
+
+### 1. **Encapsulate and Isolate Stores**
+
+Create one store per domain or feature area.
+
+```js
+// stores/useUserStore.js
+import { create } from 'zustand';
+
+export const useUserStore = create((set) => ({
+  user: null,
+  setUser: (user) => set({ user }),
+  clearUser: () => set({ user: null }),
+}));
+```
+
+---
+
+### 2. **Avoid Direct Mutation**
+
+Zustand state is immutable. Always use `set()` to update state.
+
+❌ **Don't do this:**
+```js
+userStore.user.name = 'Michael';
+```
+
+✅ **Do this:**
+```js
+set((state) => ({ user: { ...state.user, name: 'Michael' } }));
+```
+
+---
+
+### 3. **Use Selectors for Performance**
+
+Use selector functions to avoid unnecessary re-renders.
+
+```js
+const username = useUserStore((state) => state.user?.name);
+```
+
+---
+
+### 4. **Split Logic and State When Needed**
+
+Keep pure logic (formatters, async helpers) outside the store to keep stores focused.
+
+```js
+// services/userService.js
+export async function fetchUserData() {
+  const res = await fetch('/api/user');
+  return res.json();
+}
+```
+
+---
+
+### 5. **Persist State (If Needed)**
+
+Use Zustand’s middleware for persistence.
+
+```js
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+export const useThemeStore = create(
+  persist(
+    (set) => ({
+      darkMode: false,
+      toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
+    }),
+    { name: 'theme-preference' }
+  )
+);
+```
+
+---
+
+### 6. **Use Zustand Devtools (Optional)**
+
+Enable devtools in development mode only.
+
+```js
+import { devtools } from 'zustand/middleware';
+
+const useStore = create(
+  devtools((set) => ({
+    count: 0,
+    increment: () => set((state) => ({ count: state.count + 1 })),
+  }))
+);
+```
+
+---
+
+### 7. **Avoid Store in Server Components**
+
+If using React Server Components (RSC), only use Zustand in **client components**.
+
+Add `use client` directive when needed:
+```js
+'use client';
+import { useUserStore } from '@/stores/useUserStore';
+```
+
+---
+
+### 8. **Do Not Overuse Zustand**
+
+Only use Zustand for:
+- Shared state across non-related components
+- Complex or persisted state
+- Lightweight global state needs
+
+For local or simple UI state, continue using `useState`.
+
+---
+
+### 9. **Type It! (TypeScript Only)**
+
+Define types for state and actions to get autocomplete and type safety.
+
+```ts
+interface UserState {
+  user: User | null;
+  setUser: (user: User) => void;
+}
+
+export const useUserStore = create<UserState>((set) => ({
+  user: null,
+  setUser: (user) => set({ user }),
+}));
+```
+
+---
+
+## 🚫 Anti-Patterns to Avoid
+
+| ❌ Anti-Pattern                    | ✅ Instead Use                         |
+|----------------------------------|----------------------------------------|
+| Overloading a single store       | Separate by domain (e.g., `user`, `cart`) |
+| Using state without selectors    | `useStore(state => state.value)`      |
+| Managing UI state globally       | Prefer `useState` in component scope   |
+| Direct DOM access in stores      | Keep stores logic-pure (no side-effects) |
+
+---
+
+## 📚 Resources
+
+- [Zustand GitHub](https://github.com/pmndrs/zustand)
+- [Zustand Docs](https://docs.pmnd.rs/zustand/getting-started/introduction)
+- [Zustand Middleware Docs](https://docs.pmnd.rs/zustand/integrations/persisting-store-data)
+
+---
+
+Following these practices will help you build a clean, maintainable state management architecture using Zustand. Keep it small, modular, and reactive.
+
+```
+
+Let me know if you want a TypeScript-specific version or examples for async actions and loading state management.

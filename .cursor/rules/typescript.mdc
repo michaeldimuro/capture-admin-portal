@@ -1,0 +1,245 @@
+---
+description: Typescript best practices
+globs: 
+alwaysApply: false
+---
+Here’s a comprehensive `TYPESCRIPT_BEST_PRACTICES.md` file that outlines **TypeScript best practices** for consistency, safety, and scalability in your codebase:
+
+---
+
+```markdown
+# 🟦 TypeScript Best Practices
+
+This guide outlines the most important TypeScript best practices to help you write safe, clean, and scalable applications using TypeScript.
+
+---
+
+## ✅ General Guidelines
+
+### 1. **Use `strict` Mode**
+
+Enable `strict: true` in your `tsconfig.json` to enforce maximum type safety.
+
+```json
+{
+  "compilerOptions": {
+    "strict": true
+  }
+}
+```
+
+---
+
+### 2. **Prefer Type Over Interface for Objects**
+
+Use `type` for general usage and `interface` only when extending or for public APIs.
+
+```ts
+type User = {
+  id: string;
+  name: string;
+};
+
+interface Admin extends User {
+  role: 'admin';
+}
+```
+
+---
+
+### 3. **Use Union & Literal Types for Precision**
+
+```ts
+type Role = 'admin' | 'user' | 'guest';
+
+function setRole(role: Role) {
+  // role is now constrained to known values
+}
+```
+
+---
+
+### 4. **Avoid `any`**
+
+- Use `unknown` if the type is truly unknown (forces type narrowing).
+- Use type assertions when absolutely necessary (`as SomeType`), but sparingly.
+
+```ts
+function handleResponse(data: unknown) {
+  if (typeof data === 'string') {
+    // safe to use data as string
+  }
+}
+```
+
+---
+
+### 5. **Narrow Types Before Use**
+
+Type narrowing protects against runtime errors.
+
+```ts
+function printId(id: number | string) {
+  if (typeof id === 'string') {
+    console.log(id.toUpperCase());
+  } else {
+    console.log(id.toFixed(2));
+  }
+}
+```
+
+---
+
+## 🧱 Structuring Types
+
+### 6. **Avoid Optional Chaining in Type Declarations**
+
+Use precise models instead.
+
+```ts
+// ❌ Bad
+type User = {
+  name?: string;
+};
+
+// ✅ Good
+type User = {
+  name: string | null;
+};
+```
+
+---
+
+### 7. **Use Enums or Union Types for Finite Values**
+
+```ts
+// Enum (runtime + type safety)
+enum Status {
+  Idle = 'IDLE',
+  Loading = 'LOADING',
+  Success = 'SUCCESS',
+  Error = 'ERROR',
+}
+
+// Or Union (pure type safety)
+type Status = 'idle' | 'loading' | 'success' | 'error';
+```
+
+---
+
+### 8. **Extract Reusable Types**
+
+Avoid duplicating shape definitions across files.
+
+```ts
+// types/user.ts
+export type User = {
+  id: string;
+  name: string;
+};
+```
+
+---
+
+## 🛠️ Functions & React
+
+### 9. **Type All Function Parameters and Returns**
+
+```ts
+function add(a: number, b: number): number {
+  return a + b;
+}
+```
+
+---
+
+### 10. **Use `React.FC` Sparingly**
+
+Prefer explicit typing for props and avoid `React.FC` when possible:
+
+```tsx
+type Props = {
+  title: string;
+};
+
+function Header({ title }: Props) {
+  return <h1>{title}</h1>;
+}
+```
+
+---
+
+### 11. **Use Custom Hooks With Typed Returns**
+
+```ts
+function useUser(): { user: User | null; isLoading: boolean } {
+  // ...
+}
+```
+
+---
+
+## 🧪 Tooling & Ecosystem
+
+### 12. **Use ESLint with TypeScript Plugin**
+
+Install:
+
+```bash
+npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
+```
+
+Example config:
+
+```js
+module.exports = {
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint'],
+  extends: [
+    'plugin:@typescript-eslint/recommended',
+  ],
+};
+```
+
+---
+
+### 13. **Leverage Type Inference**
+
+Let TypeScript infer where possible, but annotate exports, function arguments, and public APIs.
+
+---
+
+### 14. **Use `as const` for Literal Inference**
+
+```ts
+const roles = ['admin', 'user'] as const;
+type Role = typeof roles[number]; // 'admin' | 'user'
+```
+
+---
+
+## 🚫 Common Mistakes to Avoid
+
+| ❌ Bad Practice                   | ✅ Good Practice                      |
+|----------------------------------|--------------------------------------|
+| Using `any`                      | Use specific or `unknown`            |
+| Overusing type assertions        | Let TS infer or narrow               |
+| Not typing function params       | Type everything explicitly           |
+| Mixing `interface` and `type` arbitrarily | Choose consistently                 |
+| Optional props without defaults  | Provide defaults or use `| undefined` |
+
+---
+
+## 📚 Resources
+
+- [TypeScript Handbook](mdc:https:/www.typescriptlang.org/docs)
+- [tsconfig docs](mdc:https:/www.typescriptlang.org/tsconfig)
+- [Type Challenges](mdc:https:/github.com/type-challenges/type-challenges)
+
+---
+
+By following these best practices, you’ll build safer, more scalable, and more maintainable TypeScript applications. Type safety is a tool—use it to build with confidence!
+
+```
+
+Let me know if you want this tailored specifically for React, backend APIs, or Node.js projects!
