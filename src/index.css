@@ -1,3 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Improve touch targets */
+  button, a, input, select, [role="button"] {
+    @apply touch-manipulation;
+  }
+  
+  /* Fix iOS overflow issues */
+  body {
+    @apply overscroll-none;
+  }
+  
+  /* Better mobile scrolling experience */
+  .smooth-scroll {
+    -webkit-overflow-scrolling: touch;
+    @apply scroll-smooth;
+  }
+}

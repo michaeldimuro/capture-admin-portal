@@ -52,7 +52,7 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -60,7 +60,7 @@ export function Login() {
         className="w-full max-w-md"
       >
         <Card className="overflow-hidden shadow-xl rounded-xl border border-gray-100">
-          <div className="p-8">
+          <div className="p-4 sm:p-6 md:p-8">
             <div className="text-center">
               <motion.div
                 initial={{ scale: 0.8 }}
@@ -73,39 +73,39 @@ export function Login() {
                 }}
               >
                 <div className="bg-blue-600 p-3 rounded-full inline-flex mb-3">
-                  <LogIn className="h-7 w-7 text-white" />
+                  <LogIn className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
                 </div>
               </motion.div>
-              <h2 className="text-3xl font-extrabold text-gray-900">Welcome back</h2>
-              <p className="mt-2 text-base text-gray-600">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">Welcome back</h2>
+              <p className="mt-2 text-sm sm:text-base text-gray-600">
                 Sign in to access your dashboard
               </p>
             </div>
 
-            <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            <form className="mt-6 sm:mt-8 space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
               {error && (
                 <motion.div 
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  className="rounded-lg bg-red-50 p-4 border-l-4 border-red-400"
+                  className="rounded-lg bg-red-50 p-3 sm:p-4 border-l-4 border-red-400"
                 >
                   <div className="flex items-center">
-                    <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-                    <p className="text-sm font-medium text-red-800">
+                    <AlertCircle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0" />
+                    <p className="text-xs sm:text-sm font-medium text-red-800">
                       {getFriendlyErrorMessage(error)}
                     </p>
                   </div>
                 </motion.div>
               )}
 
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                     Email address
                   </label>
                   <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Mail className="h-5 w-5 text-gray-400" />
+                      <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                     </div>
                     <input
                       id="email"
@@ -113,7 +113,7 @@ export function Login() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10 block w-full rounded-md border border-gray-300 px-3 py-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                      className="pl-10 block w-full rounded-md border border-gray-300 px-3 py-2 sm:py-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-sm sm:text-base"
                       placeholder="you@example.com"
                     />
                   </div>
@@ -125,7 +125,7 @@ export function Login() {
                   </label>
                   <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Lock className="h-5 w-5 text-gray-400" />
+                      <Lock className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                     </div>
                     <input
                       id="password"
@@ -133,7 +133,7 @@ export function Login() {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10 block w-full rounded-md border border-gray-300 px-3 py-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                      className="pl-10 block w-full rounded-md border border-gray-300 px-3 py-2 sm:py-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-sm sm:text-base"
                       placeholder="••••••••"
                     />
                   </div>
@@ -144,7 +144,7 @@ export function Login() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                  className="w-full flex justify-center items-center py-2 sm:py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
                   {isLoading ? (
                     <>
@@ -159,10 +159,10 @@ export function Login() {
               </div>
             </form>
 
-            <div className="mt-6">
+            <div className="mt-4 sm:mt-6">
               <button 
                 onClick={() => setShowDemoAccounts(!showDemoAccounts)}
-                className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors duration-200"
+                className="text-xs sm:text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors duration-200"
               >
                 {showDemoAccounts ? 'Hide demo accounts' : 'Show demo accounts'}
               </button>
@@ -172,10 +172,10 @@ export function Login() {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   transition={{ duration: 0.3 }}
-                  className="mt-3 p-3 bg-gray-50 rounded-md border border-gray-200"
+                  className="mt-2 sm:mt-3 p-2 sm:p-3 bg-gray-50 rounded-md border border-gray-200"
                 >
                   <p className="text-xs text-gray-600 font-medium mb-1">Demo Accounts:</p>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div 
                       onClick={() => {
                         setEmail("admin@example.com");

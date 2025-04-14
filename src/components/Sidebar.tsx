@@ -7,13 +7,18 @@ import {
   Settings,
   ShoppingCart,
   Users,
-  LogOut
+  LogOut,
+  X
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { cn } from '../lib/utils';
 import { useAuth } from '../hooks/useAuth';
 
-export function Sidebar() {
+interface SidebarProps {
+  closeSidebar?: () => void;
+}
+
+export function Sidebar({ closeSidebar }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuthStore();
@@ -43,11 +48,20 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
-      <div className="flex items-center justify-center h-16 border-b border-gray-200">
+    <aside className="w-64 h-full bg-white border-r border-gray-200 flex flex-col">
+      <div className="flex items-center justify-between h-16 border-b border-gray-200 px-4">
         <h1 className="text-xl font-bold text-gray-900">
           Capture Health
         </h1>
+        {/* Close button for mobile */}
+        {closeSidebar && (
+          <button 
+            onClick={closeSidebar}
+            className="md:hidden p-2 text-gray-500 hover:text-gray-700"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
       </div>
       
       <div className="flex-1 overflow-y-auto py-4">
@@ -64,6 +78,7 @@ export function Sidebar() {
                     ? 'bg-gray-100 text-gray-900'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 )}
+                onClick={closeSidebar}
               >
                 <Icon className="h-5 w-5" />
                 {link.label}
@@ -75,7 +90,10 @@ export function Sidebar() {
 
       <div className="border-t border-gray-200 p-4">
         <button
-          onClick={handleLogout}
+          onClick={() => {
+            handleLogout();
+            if (closeSidebar) closeSidebar();
+          }}
           className="flex items-center gap-3 px-3 py-2 w-full text-sm font-medium text-red-600 hover:bg-red-50 rounded-md"
         >
           <LogOut className="h-5 w-5" />
