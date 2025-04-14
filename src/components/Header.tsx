@@ -22,7 +22,7 @@ export function Header() {
             </button>
             <button className="flex items-center gap-2 text-sm font-medium text-gray-700">
               <User className="h-6 w-6" />
-              <span>{user?.name}</span>
+              <span>{user?.firstName}</span>
             </button>
           </div>
         </div>
