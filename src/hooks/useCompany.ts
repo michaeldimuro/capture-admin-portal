@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { companiesApi } from '../lib/api';
+import { companiesService } from '../lib/api/services';
+import { queryKeys } from '../lib/api/queryKeys';
 
 export function useCompany(id: string) {
   return useQuery({
-    queryKey: ['companies', id],
-    queryFn: () => companiesApi.getCompany(id),
+    queryKey: queryKeys.companies.detail(id),
+    queryFn: () => companiesService.getCompany(id),
     enabled: !!id,
   });
 }

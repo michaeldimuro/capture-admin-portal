@@ -1,14 +1,16 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { authApi } from '../lib/api';
+import { authService } from '../lib/api/services';
 import { useAuthStore } from '../stores/authStore';
 import { useEffect, useRef } from 'react';
+import { queryKeys } from '../lib/api/queryKeys';
 
 // Session inactivity timeout in milliseconds (15 minutes)
 const INACTIVITY_TIMEOUT = 15 * 60 * 1000;
 
 export function useAuth() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { login: storeLogin, logout: removeUser } = useAuthStore();
   const inactivityTimerRef = useRef<number | null>(null);
   
@@ -57,18 +59,20 @@ export function useAuth() {
 
   const loginMutation = useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
-      const response = await authApi.login(email, password);
+      const response = await authService.login(email, password);
       return response;
     },
     onSuccess: (data) => {
       storeLogin(data.user);
       resetInactivityTimer(); // Start inactivity timer
+      // Invalidate any relevant queries that need refreshing after login
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.stats });
       navigate('/');
     },
   });
 
   const logout = () => {
-    authApi.logout();
+    authService.logout();
     removeUser();
     
     // Clear inactivity timer
@@ -76,6 +80,9 @@ export function useAuth() {
       window.clearTimeout(inactivityTimerRef.current);
       inactivityTimerRef.current = null;
     }
+    
+    // Clear all query caches when logging out
+    queryClient.clear();
     
     navigate('/login');
   };
