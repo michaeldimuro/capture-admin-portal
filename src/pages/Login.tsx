@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { Card } from '../components/ui/Card';
@@ -8,13 +8,27 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 
 export function Login() {
-  const { user } = useAuthStore();
-  const { login, isLoading, error } = useAuth();
+  const { isAuthenticated } = useAuthStore();
+  const { login, isLoading, error, validateSession } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showDemoAccounts, setShowDemoAccounts] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
-  if (user) {
+  // Check if the user is already authenticated
+  useEffect(() => {
+    const checkAuth = async () => {
+      if (isAuthenticated()) {
+        setRedirecting(true);
+        // Validate the session to make sure it's still valid
+        await validateSession();
+      }
+    };
+    
+    checkAuth();
+  }, [isAuthenticated, validateSession]);
+
+  if (isAuthenticated() && redirecting) {
     return <Navigate to="/" />;
   }
 

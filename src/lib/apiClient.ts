@@ -29,8 +29,13 @@ const processQueue = (error: Error | null, token: string | null = null) => {
   failedQueue = [];
 };
 
+// Helper function to get auth store state safely
+const getAuthState = () => {
+  return useAuthStore.getState();
+};
+
 api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().getToken();
+  const token = getAuthState().getToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -43,18 +48,16 @@ api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    const refreshToken = useAuthStore.getState().getRefreshToken();
     
     // Check if error is 403 (Forbidden) - handle as session expired
     if (error.response?.status === 403) {
-      // Clear tokens by logging out the user
-      useAuthStore.getState().logout();
-      
-      // Trigger logout event
+      // Dispatch session expired event first, then logout
       window.dispatchEvent(new CustomEvent('auth:sessionExpired'));
-      
       return Promise.reject(error);
     }
+    
+    const authState = getAuthState();
+    const refreshToken = authState.getRefreshToken();
     
     // If the error is not 401 or it's already retried, reject
     if (
@@ -88,7 +91,7 @@ api.interceptors.response.use(
       const { accessToken: newToken, refreshToken: newRefreshToken } = response.data;
       
       // Update tokens in auth store
-      useAuthStore.getState().setTokens(newToken, newRefreshToken);
+      getAuthState().setTokens(newToken, newRefreshToken);
       
       // Update authorization header for the original request
       originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
@@ -100,10 +103,7 @@ api.interceptors.response.use(
     } catch (refreshError) {
       processQueue(refreshError as Error, null);
       
-      // Clear tokens by logging out
-      useAuthStore.getState().logout();
-      
-      // Trigger logout event
+      // Trigger session expired event
       window.dispatchEvent(new CustomEvent('auth:sessionExpired'));
       
       return Promise.reject(refreshError);

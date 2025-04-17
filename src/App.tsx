@@ -23,6 +23,7 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   // Check token validity on route access
   useEffect(() => {
     const validateToken = async () => {
+      // Only proceed with validation if there's a token
       const token = getToken();
       if (!token) {
         navigate('/login');
@@ -42,9 +43,15 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
       }
     };
     
-    validateToken();
-  }, [navigate, getToken, logout]);
+    // Only validate if we think we're authenticated
+    if (isAuthenticated()) {
+      validateToken();
+    } else {
+      navigate('/login');
+    }
+  }, [navigate, getToken, logout, isAuthenticated]);
   
+  // This check is redundant with the useEffect, but keeping it for safety
   if (!isAuthenticated()) {
     return <Navigate to="/login" />;
   }

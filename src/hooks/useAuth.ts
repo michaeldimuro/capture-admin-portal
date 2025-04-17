@@ -12,7 +12,12 @@ export function useAuth() {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
-  const { login: storeLogin, logout: removeUser, getToken } = useAuthStore();
+  const { 
+    login: storeLogin, 
+    logout: removeUser, 
+    getToken,
+    isAuthenticated 
+  } = useAuthStore();
   const inactivityTimerRef = useRef<number | null>(null);
   
   // Reset the inactivity timer when user activity is detected
@@ -29,7 +34,11 @@ export function useAuth() {
   
   // Memoize the logout function to prevent unnecessary re-renders
   const logout = useCallback(() => {
-    authService.logout();
+    // Only call API logout if we're authenticated
+    if (isAuthenticated()) {
+      authService.logout();
+    }
+    
     removeUser();
     
     // Clear inactivity timer
@@ -43,7 +52,7 @@ export function useAuth() {
     
     // Always redirect to login page when logging out
     navigate('/login');
-  }, [navigate, removeUser, queryClient]);
+  }, [navigate, removeUser, queryClient, isAuthenticated]);
   
   // Validate session token on app initialization
   const validateSession = useCallback(async () => {
@@ -76,10 +85,8 @@ export function useAuth() {
     window.addEventListener('auth:sessionExpired', logout);
     
     // Initial timer setup if user is logged in
-    if (getToken()) {
+    if (isAuthenticated()) {
       resetInactivityTimer();
-      // Validate the token on component mount
-      validateSession();
     }
     
     // Cleanup event listeners on component unmount
@@ -94,7 +101,7 @@ export function useAuth() {
       
       window.removeEventListener('auth:sessionExpired', logout);
     };
-  }, [logout, validateSession, getToken]);
+  }, [logout, isAuthenticated]);
 
   const loginMutation = useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
@@ -115,5 +122,6 @@ export function useAuth() {
     logout,
     isLoading: loginMutation.isPending,
     error: loginMutation.error,
+    validateSession
   };
 }
