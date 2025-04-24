@@ -1,27 +1,39 @@
 import api from '../../apiClient';
 
 export interface DashboardStats {
-  companies?: number;
-  activeMedications?: number;
-  totalPatients: number;
-  activeOrders: number;
-  monthlyRevenue: number;
-  recentOrders: Array<{
-    id: string;
-    patient: string;
-    medication: string;
-    status: string;
-  }>;
-  alerts: Array<{
-    id: number;
-    type: 'warning' | 'info' | 'success';
-    message: string;
-  }>;
+  companies: {
+    total: number;
+    active: number;
+    suspended: number;
+    newThisMonth: number;
+  };
+  users: {
+    total: number;
+    newThisMonth: number;
+  };
+  orders: {
+    total: number;
+    newThisMonth: number;
+  };
+  patients: {
+    total: number;
+    newThisMonth: number;
+  };
+  revenue: {
+    total: number;
+    thisMonth: number;
+  };
+  intakes: {
+    total: number;
+    newThisMonth: number;
+    completed: number;
+    abandoned: number;
+  };
 }
 
 export const dashboardService = {
   getStats: async (): Promise<DashboardStats> => {
-    const response = await api.get('/dashboard/stats');
+    const response = await api.get('/admin/dashboard');
     return response.data;
   },
 }; 

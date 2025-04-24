@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { dashboardService } from '../lib/api/services';
+import { dashboardService, DashboardStats } from '../lib/api/services/dashboardService';
 import { queryKeys } from '../lib/api/queryKeys';
 import { useAuthStore } from '../stores/authStore';
 
@@ -9,9 +9,9 @@ export function useDashboard() {
   return useQuery({
     queryKey: queryKeys.dashboard.stats,
     queryFn: dashboardService.getStats,
-    select: (data) => {
+    select: (data: DashboardStats) => {
       // Filter data based on user role
-      if (user?.role === 'COMPANY_ADMIN') {
+      if (user?.role !== 'SUPERADMIN') {
         const { companies, ...rest } = data;
         return rest;
       }
