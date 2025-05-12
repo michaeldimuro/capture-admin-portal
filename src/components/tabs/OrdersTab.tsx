@@ -120,7 +120,7 @@ export function OrdersTab({ companyId }: { companyId: string }) {
 
   // Helper function to format the status for display
   const formatStatus = (status: string) => {
-    return status
+    return !status ? 'No Status' : status
       .split('_')
       .map(word => word.charAt(0) + word.slice(1).toLowerCase())
       .join(' ');
